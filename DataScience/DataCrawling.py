@@ -245,7 +245,7 @@ def get_full_information(html_parse) -> dict:
     return result
 
 def crawl(url, save_file = "save.txt"):
-    print("\rCrawling {}".format(test_url))
+    print("\rCrawling {}".format(url))
     # Send request and receive html text
     if not os.path.exists(save_file):
         html_text = get_html_pass_cloudflare(url)
@@ -270,6 +270,7 @@ if __name__ == "__main__":
         args = parser.parse_args()
 
         crawl(args.url)
+
 
 
 
