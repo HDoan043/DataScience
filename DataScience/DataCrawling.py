@@ -226,7 +226,7 @@ def get_full_information(html_parse) -> dict:
         result["title"] = title
         result["publisher"] = publiser
         result["latest update time"] = latest_update_time
-        print("\r       Finish crawling!", end = "")
+        print("\r       Finish crawling!                                     ")
         
     else:
         print("\r    |X| Cannot get the content, author, source, publish time!!!")
@@ -269,6 +269,7 @@ if __name__ == "__main__":
         args = parser.parse_args()
 
         crawl(args.url)
+
 
 
 
