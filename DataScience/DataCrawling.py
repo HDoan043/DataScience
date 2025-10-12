@@ -132,8 +132,8 @@ def get_content(html_parse: BeautifulSoup) -> dict:
     content_list = html_parse.select(selector)
     if len(content_list):
         full_content = ''
-        accept_tag = ['p', 'h1', 'h2', 'h3', 'h4', 'h5'] # list of acceptable tags, this is for eleminating the figure
-        end_main_content = ['—','——','———',]                        # list of signals which indicate that the main content ends
+        accept_tag = ['div', 'h1', 'h2', 'h3', 'h4', 'h5'] # list of acceptable tags, this is for eleminating the figure
+        end_main_content = ['—','——','———',]               # list of signals which indicate that the main content ends
 
         author = 'Unknown'
         source = 'Unknown'
@@ -142,8 +142,7 @@ def get_content(html_parse: BeautifulSoup) -> dict:
 
         # Extract full content, full content ends by the line '——'
         for i in range(len(content_list)):
-            print("<TAG> {}".format(content_list[i].name))
-            if content_list[i].name in accept_tag and '—' not in content_list[i].text:
+            if content_list[i].name in accept_tag and 'p' in content_list[i].get('class') and '—' not in content_list[i].text:
                 full_content += content_list[i].text + "\n"
 
             # Extract author and original article: 
@@ -271,4 +270,5 @@ if __name__ == "__main__":
         args = parser.parse_args()
 
         crawl(args.url)
+
 
