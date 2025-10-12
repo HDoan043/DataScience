@@ -143,7 +143,7 @@ def get_content(html_parse: BeautifulSoup) -> dict:
         # Extract full content, full content ends by the line '——'
         for i in range(len(content_list)):
             if content_list[i].name in accept_tag and '—' not in content_list[i].text :
-                full_content += content_list[i].text + "\n"
+                full_content += content_list[i].text + "\n\n"
 
             # Extract author and original article: 
             # after main content, the information of author and the original article is shown in (i+1)-th element
@@ -165,17 +165,16 @@ def get_content(html_parse: BeautifulSoup) -> dict:
                             publish_time = format_text
                         if 'link' in child.text.lower():
                             source_link = format_text
-                # print(full_content)
-                time.sleep(10)
-                return {
-                    "content": full_content,
-                    "author" : author,
-                    "source" : source,
-                    "publish time": publish_time,
-                    "source link": source_link
-                }
-        
-        
+                break
+                
+        return {
+            "content": full_content,
+            "author" : author,
+            "source" : source,
+            "publish time": publish_time,
+            "source link": source_link
+        }
+                    
     return None
 
 def get_full_information(html_parse) -> dict:
@@ -270,6 +269,7 @@ if __name__ == "__main__":
         args = parser.parse_args()
 
         crawl(args.url)
+
 
 
 
