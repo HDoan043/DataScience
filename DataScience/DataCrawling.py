@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import cloudscraper, random, time, json, os, requests
+import argparse
 
 def get_html_pass_cloudflare(
         url: str, 
@@ -265,5 +266,9 @@ def crawl(url, save_file = "save.txt"):
         print("[FAIL] Cannot access to website!!!")
 
 if __name__ == "__main__":
-    test_url = 'https://batdongsan.com.vn/tin-tuc/maison-grand-buoc-ngoat-moi-tren-hanh-trinh-kien-tao-chuan-song-chuyen-gia-tai-sieu-cang-quoc-te-phu-my-847604'
-    crawl(test_url)
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--url', typ=str, help = 'url')
+        args = parser.parse_args()
+
+        crawl(args.url)
+
