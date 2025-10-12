@@ -266,9 +266,10 @@ def crawl(url, save_file = "save.txt"):
 
 if __name__ == "__main__":
         parser = argparse.ArgumentParser()
-        parser.add_argument('--url', typ=str, help = 'url')
+        parser.add_argument('--url', type=str, help = 'url')
         args = parser.parse_args()
 
         crawl(args.url)
+
 
 
