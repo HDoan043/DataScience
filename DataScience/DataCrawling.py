@@ -142,7 +142,7 @@ def get_content(html_parse: BeautifulSoup) -> dict:
 
         # Extract full content, full content ends by the line '——'
         for i in range(len(content_list)):
-            if content_list[i].name in accept_tag and 'p' in content_list[i].get('class') and '—' not in content_list[i].text:
+            if (content_list[i].name in accept_tag or 'p' in content_list[i].get('class') )and '—' not in content_list[i].text :
                 full_content += content_list[i].text + "\n"
 
             # Extract author and original article: 
@@ -270,6 +270,7 @@ if __name__ == "__main__":
         args = parser.parse_args()
 
         crawl(args.url)
+
 
 
 
