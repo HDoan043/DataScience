@@ -243,7 +243,7 @@ def get_full_information(html_parse) -> dict:
         
     return result
 
-def get_link_list(url: str, save_file = "tem.txt"):
+def get_link_list(url: str, save_file = "/kaggle/working/tem.txt"):
         '''
         This function gets list of links of a website
         '''
@@ -355,6 +355,7 @@ if __name__ == "__main__":
         links = get_link_list(args.links_list_url)
         if links: print("Successfully get {} links".format(len(links)))
         else: print("Fail to get link list")
+
 
 
 
