@@ -243,32 +243,102 @@ def get_full_information(html_parse) -> dict:
         
     return result
 
-def crawl(url, save_file = "save.txt"):
-    print("\rCrawling {}".format(url))
-    # Send request and receive html text
-    if not os.path.exists(save_file):
+def get_link_list(url: str) -> list(str):
+        '''
+        This function gets list of links of a website
+        '''
+        print("------ GETTING LISTS OF URLS -----")
         html_text = get_html_pass_cloudflare(url)
-        with open(save_file, "w", encoding = "utf-8") as f:
-            f.write(html_text)
-    else:
-        with open(save_file, "r", encoding="utf-8") as f:
-            html_text = f.read()
+        if html_text:
+                html_parse = parse_html(html_text)
+                main_area = '#__next > main > div > div:nth-child(2) > div.col-lg-8.col-md-12.col-sm-12 > a'
+                side_bar = '#__next > main > div > div:nth-child(2) > div.col-lg-4.col-md-12.col-sm-12'
+                best_views = '#__next > main > div > div:nth-child(3) > div.hidden-xs.col-xl-4.col-lg-4.col-md-12.col-12 > div.PopularArticles_popularArticlesWrapper__VP0DZ'
+                ls_container = '#__next > main > div > div:nth-child(3) > div.col-xl-8.col-lg-8.col-md-12.col-12 > div:nth-child(2) > div.ArticleCardLarge_articleWrapper_rp8cl'
 
-    if html_text:
-        html_parse = parse_html(html_text)
-        result = get_full_information(html_parse)
-        
-        for key, value in result.items():
-            print("{}: {}".format(key, value))
-    else:
-        print("[FAIL] Cannot access to website!!!")
+                ls_links = []
+                
+                # get link in main area
+                main_area_link = html_parse.select(main_area)
+                if len(main_area_link):
+                        ls_links.append(html_parse.select(main_area)[0].get('href').text)
+                else: print("|X| Cannot get the link in the main area !!!")
+
+                # get links in side bar
+                elements_side_bar_ls = html_parse.select(side_bar)
+                if elements_side_bar_ls:
+                        element_a_ls = elements_side_bar_ls[0].find_all('a', href = True)
+                        if len(element_a_ls):
+                                ls_links.extend([element_a.get('href') for element_a in element_a_ls])
+                        else: print("(!!!) | There is no articles in side bar area !!!")
+                else: print("|X| Cannot get the links in the side bar")
+
+                # get links in best views
+                best_view_ls = html_parse.select(best_views)
+                if len(best_view_ls):
+                        best_view_articles = best_view_ls[0].select('a')
+                        if len(best_view_articles):
+                                ls_links.extend([article.get('href') for article in best_view_articles])
+                        else: print("(!!!) | There is no articles in the best view area!!!")
+                else: print("|X| Cannot get the links in the best view area!!!")
+
+                # get links in ls_container
+                articles = html_parse.select(ls_container)
+                if len(articles):
+                        for element in articles:
+                                element_a = element.find('a')
+                                if element_a:
+                                        ls_links.append(element_a.get('href'))
+                else: print("|X| Cannot get the links in container!!!")
+
+                if len(ls_links): return ls_links
+                return None
+                
+        print("(*_*) Cannot access the website !!")               
+        return None
+
+def save_data(ls_of_dict_object, save_file = "batdongsan.json"):
+        '''
+        This function saves the crawled data into the destination
+        '''
+        with open(save_file, "w", encoding = "utf-8") as f:
+                json.dump(ls_of_dict_object, f, ensure_ascii = False, indent = 4)
+
+def crawl(links_list_url: str, destination = "batdongsan.json"):
+        '''
+        Function crawls data and save data into the destination
+        '''
+        # check if the destination file has some data?
+        if os.path.exists(destination):
+                with open(destination, "r", encoding = "utf-8") as f:
+                        prev_data = json.load(f)
+        else: prev_data = []
+        # get list of links
+        links_ls = get_link_list(links_list_url)
+        if links_ls:
+                # filter the unique links
+                url_set = set(links_ls)
+                for url in links_ls and url in url_set:
+                        html_text = get_html_pass_cloudflare(url)
+                        if html_text:
+                                html_parse = parse_html(html_text)
+                                # get information in html
+                                info = get_full_information(html_parse)
+                                if info: 
+                                        info["url"] = url
+                                        prev_data.append(info)
+                                else: print("|X| Cannot get information in url {}".format(url))
+                        else: print("|X| Cannot access the article {}".format(url))
+        else: print("|X| Cannot get link list !!!") 
 
 if __name__ == "__main__":
         parser = argparse.ArgumentParser()
-        parser.add_argument('--url', type=str, help = 'url')
+        parser.add_argument('--links_list_url', type=str, help = 'the url leading to the page containing lists of article')
+        parser.add_argument('--save_path', type = str, default = 'batdongsan.json', help = 'where the crawled data is saved')
         args = parser.parse_args()
 
-        crawl(args.url)
+        crawl(args.links_list_url, args.save_path)
+
 
 
 
