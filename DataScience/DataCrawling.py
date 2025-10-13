@@ -318,17 +318,20 @@ def crawl(links_list_url: str, destination = "batdongsan.json"):
         if links_ls:
                 # filter the unique links
                 url_set = set(links_ls)
-                for url in links_ls and url in url_set:
-                        html_text = get_html_pass_cloudflare(url)
-                        if html_text:
-                                html_parse = parse_html(html_text)
-                                # get information in html
-                                info = get_full_information(html_parse)
-                                if info: 
-                                        info["url"] = url
-                                        prev_data.append(info)
-                                else: print("|X| Cannot get information in url {}".format(url))
+                for url in links_ls and:
+                        if url in url_set:
+                                html_text = get_html_pass_cloudflare(url)
+                                if html_text:
+                                        html_parse = parse_html(html_text)
+                                        # get information in html
+                                        info = get_full_information(html_parse)
+                                        if info: 
+                                                info["url"] = url
+                                                prev_data.append(info)
+                                        else: print("|X| Cannot get information in url {}".format(url))
                         else: print("|X| Cannot access the article {}".format(url))
+                save_data(prev_data, destination) 
+                        
         else: print("|X| Cannot get link list !!!") 
 
 if __name__ == "__main__":
@@ -338,6 +341,7 @@ if __name__ == "__main__":
         args = parser.parse_args()
 
         crawl(args.links_list_url, args.save_path)
+
 
 
 
