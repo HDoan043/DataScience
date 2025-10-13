@@ -249,6 +249,7 @@ def get_link_list(url: str, save_file = "/kaggle/working/tem.txt"):
         '''
         print("------ GETTING LISTS OF URLS -----")
         if os.path.exists(save_file):
+                print("Loading HTML from temporary file...")
                 with open(save_file, "r", encoding = "utf-8") as f:
                         html_text = f.read()
                 
@@ -287,7 +288,7 @@ def get_link_list(url: str, save_file = "/kaggle/working/tem.txt"):
                 # get links in best views
                 best_view_ls = html_parse.select(best_views)
                 if len(best_view_ls):
-                        best_view_articles = best_view_ls[0].select('a')
+                        best_view_articles = best_view_ls[0].find_all('a', href = True)
                         if len(best_view_articles):
                                 ls_links.extend([article.get('href') for article in best_view_articles])
                         else: print("(!!!) | There is no articles in the best view area!!!")
@@ -355,6 +356,7 @@ if __name__ == "__main__":
         links = get_link_list(args.links_list_url)
         if links: print("Successfully get {} links".format(len(links)))
         else: print("Fail to get link list")
+
 
 
 
