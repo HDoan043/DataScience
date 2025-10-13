@@ -261,7 +261,7 @@ def get_link_list(url: str):
                 # get link in main area
                 main_area_link = html_parse.select(main_area)
                 if len(main_area_link):
-                        ls_links.append(html_parse.select(main_area)[0].get('href').text)
+                        ls_links.append(html_parse.select(main_area)[0].get('href'))
                 else: print("|X| Cannot get the link in the main area !!!")
 
                 # get links in side bar
@@ -338,6 +338,7 @@ if __name__ == "__main__":
         args = parser.parse_args()
 
         crawl(args.links_list_url, args.save_path)
+
 
 
 
