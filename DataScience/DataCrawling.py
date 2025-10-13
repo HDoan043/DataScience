@@ -243,12 +243,23 @@ def get_full_information(html_parse) -> dict:
         
     return result
 
-def get_link_list(url: str):
+def get_link_list(url: str, save_file = "tem.txt"):
         '''
         This function gets list of links of a website
         '''
         print("------ GETTING LISTS OF URLS -----")
-        html_text = get_html_pass_cloudflare(url)
+        if os.path.exists(save_file):
+                with open(save_file, "r", encoding = "utf-8") as f:
+                        html_text = f.read()
+                
+        else: 
+                html_text = get_html_pass_cloudflare(url)
+                if html_text:
+                        with open(save_file, "w", encoding = "utf-8") as f:
+                                f.write(html_text)
+                else: 
+                        print("(*_*) Cannot access the website !!")               
+                        return None
         if html_text:
                 html_parse = parse_html(html_text)
                 main_area = '#__next > main > div > div:nth-child(2) > div.col-lg-8.col-md-12.col-sm-12 > a'
@@ -344,6 +355,7 @@ if __name__ == "__main__":
         links = get_link_list(args.links_list_url)
         if links: print("Successfully get {} links".format(len(links)))
         else: print("Fail to get link list")
+
 
 
 
