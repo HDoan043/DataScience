@@ -243,7 +243,7 @@ def get_full_information(html_parse) -> dict:
         
     return result
 
-def get_link_list(url: str) -> list(str):
+def get_link_list(url: str):
         '''
         This function gets list of links of a website
         '''
@@ -338,6 +338,7 @@ if __name__ == "__main__":
         args = parser.parse_args()
 
         crawl(args.links_list_url, args.save_path)
+
 
 
 
