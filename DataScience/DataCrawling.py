@@ -318,7 +318,7 @@ def crawl(links_list_url: str, destination = "batdongsan.json"):
         if links_ls:
                 # filter the unique links
                 url_set = set(links_ls)
-                for url in links_ls and:
+                for url in links_ls:
                         if url in url_set:
                                 html_text = get_html_pass_cloudflare(url)
                                 if html_text:
@@ -344,6 +344,7 @@ if __name__ == "__main__":
         links = get_link_list(args.links_list_url)
         if links: print("Successfully get {} links".format(len(links)))
         else: print("Fail to get link list")
+
 
 
 
