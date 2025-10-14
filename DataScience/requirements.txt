@@ -2,3 +2,4 @@ beautifulsoup4
 cloudscraper
 numpy
 pandas
+playwright
