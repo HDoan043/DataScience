@@ -245,7 +245,7 @@ def get_full_information(html_parse) -> dict:
         
     return result
 
-def interact_html_geting_links(page):
+def interact_html_getting_links(page):
         '''
         This function will interact the html to show more information.
         This will help with adding more elements into document
@@ -285,7 +285,7 @@ def get_link_list(url: str, save_file = "/kaggle/working/tem.html"):
                 if result_open:
                         browser, page = result_open
                         if browserController.access_html(save_file):
-                                html_text = interact_html(page)
+                                html_text = interact_html_getting_links(page)
                         else: html_text = None
                 else: html_text = None
                         
@@ -384,6 +384,7 @@ if __name__ == "__main__":
         links = get_link_list(args.links_list_url, args.links_list_html)
         if links: print("Successfully get {} links".format(len(links)))
         else: print("Fail to get link list")
+
 
 
 
