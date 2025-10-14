@@ -376,13 +376,15 @@ def crawl(links_list_url: str, destination = "batdongsan.json"):
 if __name__ == "__main__":
         parser = argparse.ArgumentParser()
         parser.add_argument('--links_list_url', type=str, help = 'the url leading to the page containing lists of article')
+        parser.add_argument('--links_list_html', type=str, default = '/kaggle/working/DataScience/DataScience/tem.html', help = 'the html document which is crawled from page containing many articles with their links')
         parser.add_argument('--save_path', type = str, default = 'batdongsan.json', help = 'where the crawled data is saved')
         args = parser.parse_args()
 
         # crawl(args.links_list_url, args.save_path)
-        links = get_link_list(args.links_list_url)
+        links = get_link_list(args.links_list_url, args.links_list_html)
         if links: print("Successfully get {} links".format(len(links)))
         else: print("Fail to get link list")
+
 
 
 
