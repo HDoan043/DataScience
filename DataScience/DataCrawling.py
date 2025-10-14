@@ -1,6 +1,8 @@
 from bs4 import BeautifulSoup
 import cloudscraper, random, time, json, os, requests
 import argparse
+from BrowserController import BrowserController
+from playwright.sync_api import sync_playwright
 
 def get_html_pass_cloudflare(
         url: str, 
@@ -243,17 +245,30 @@ def get_full_information(html_parse) -> dict:
         
     return result
 
-def get_link_list(url: str, save_file = "/kaggle/working/tem.txt"):
+def interact_html_geting_links(page):
+        '''
+        This function will interact the html to show more information.
+        This will help with adding more elements into document
+        '''
+        num_time_click = 10
+        button_selector = '#__next > main > div > div:nth-child(3) > div.col-xl-8.col-lg-8.col-md-12.col-12 > div:nth-child(4) button.ArticleFeed_showMoreButton__beGxM'
+     
+        for _ in range(num_time_click):
+                button_locator = page.locator(button_selector)
+                button_locator.scroll_into_view_if_needed()
+                button_locator.click()
+                page.wait_for_load_state("load")
+                page.wait_for_timeout(1000)
+
+        return page.content()
+        
+def get_link_list(url: str, save_file = "/kaggle/working/tem.html"):
         '''
         This function gets list of links of a website
         '''
         print("------ GETTING LISTS OF URLS -----")
-        if os.path.exists(save_file):
-                print("Loading HTML from temporary file...")
-                with open(save_file, "r", encoding = "utf-8") as f:
-                        html_text = f.read()
-                
-        else: 
+        # If there is no html file which containing list of urls, connect to website to get html document
+        if not os.path.exists(save_file):
                 html_text = get_html_pass_cloudflare(url)
                 if html_text:
                         with open(save_file, "w", encoding = "utf-8") as f:
@@ -261,12 +276,25 @@ def get_link_list(url: str, save_file = "/kaggle/working/tem.txt"):
                 else: 
                         print("(*_*) Cannot access the website !!")               
                         return None
+        
+        # open browser
+        with sync_playwright() as p:
+                browserController = BrowserController(p)
+                # open browser
+                result_open = browserController.open_browser()
+                if result_open:
+                        browser, page = result_open
+                        if browserController.access_html(save_file):
+                                html_text = interact_html(page)
+                        else: html_text = None
+                else: html_text = None
+                        
         if html_text:
                 html_parse = parse_html(html_text)
                 main_area = '#__next > main > div > div:nth-child(2) > div.col-lg-8.col-md-12.col-sm-12 > a'
                 side_bar = '#__next > main > div > div:nth-child(2) > div.col-lg-4.col-md-12.col-sm-12'
                 best_views = '#__next > main > div > div:nth-child(3) > div.hidden-xs.col-xl-4.col-lg-4.col-md-12.col-12 > div.PopularArticles_popularArticlesWrapper__VP0DZ'
-                ls_container = '#__next > main > div > div:nth-child(3) > div.col-xl-8.col-lg-8.col-md-12.col-12 > div:nth-child(2) > div.ArticleCardLarge_articleWrapper_rp8cl'
+                ls_container = '#__next > main > div > div:nth-child(3) > div.col-xl-8.col-lg-8.col-md-12.col-12 > div:nth-child(4) > div.ArticleCardLarge_articleWrapper__rp8cl > div > div:nth-child(1) > a'
 
                 ls_links = []
                 
@@ -297,8 +325,7 @@ def get_link_list(url: str, save_file = "/kaggle/working/tem.txt"):
                 # get links in ls_container
                 articles = html_parse.select(ls_container)
                 if len(articles):
-                        for element in articles:
-                                element_a = element.find('a')
+                        for element_a in articles:
                                 if element_a:
                                         ls_links.append(element_a.get('href'))
                 else: print("|X| Cannot get the links in container!!!")
@@ -356,6 +383,7 @@ if __name__ == "__main__":
         links = get_link_list(args.links_list_url)
         if links: print("Successfully get {} links".format(len(links)))
         else: print("Fail to get link list")
+
 
 
 
