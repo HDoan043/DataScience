@@ -250,7 +250,7 @@ def interact_html_getting_links(page):
         This function will interact the html to show more information.
         This will help with adding more elements into document
         '''
-        num_time_click = 10
+        num_time_click = 3
         button_selector = '#__next > main > div > div:nth-child(3) > div.col-xl-8.col-lg-8.col-md-12.col-12 > div:nth-child(4) button.ArticleFeed_showMoreButton__beGxM'
      
         for _ in range(num_time_click):
